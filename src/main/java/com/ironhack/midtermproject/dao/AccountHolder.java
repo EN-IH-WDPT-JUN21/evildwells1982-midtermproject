@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 
 @Getter
@@ -22,12 +23,19 @@ public class AccountHolder extends User {
     private Date dateOfBirth;
 
     @OneToOne
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "primary_address_id")
     private Address primaryAddress;
 
     @OneToOne
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "mailing_address_id")
     private Address mailingAddress;
+
+    @OneToMany(mappedBy = "primaryOwner")
+    private List<Account> primaryAccountList;
+
+    @OneToMany(mappedBy = "secondaryOwner")
+    private List<Account> secondaryAccountList;
+
 
 
     public AccountHolder(String name, Date dateOfBirth, Address primaryAddress, Address mailingAddress) {

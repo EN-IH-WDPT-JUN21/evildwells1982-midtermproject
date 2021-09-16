@@ -12,13 +12,14 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
 
 public class ThirdParty extends User{
 
-    private final int hashKey = getName().hashCode();
+    //change this later
+    private final int hashKey = 123456789;
 
     public ThirdParty(String name) {
         super(name);

@@ -1,13 +1,13 @@
 package com.ironhack.midtermproject.dao;
 
 import com.ironhack.midtermproject.interfaces.Maintenance;
+import com.ironhack.midtermproject.interfaces.Penalties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 
@@ -17,10 +17,17 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
-public class CheckingAccount extends Account implements Maintenance {
+public class CheckingAccount extends Account implements Maintenance, Penalties {
 
     private String secretKey;
+    @Embedded
+    @AttributeOverride(name="amount", column = @Column(name="minimum_balance_amount"))
+    @AttributeOverride(name="currency", column = @Column(name="minimum_balance_currency"))
     private Money minimumBalance;
+
+    @Embedded
+    @AttributeOverride(name="amount", column = @Column(name="maintenance_amount"))
+    @AttributeOverride(name="currency", column = @Column(name="maintenance_currency"))
     private Money monthlyMaintenanceFee;
 
     public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Money minimumBalance, Money monthlyMaintenanceFee) {

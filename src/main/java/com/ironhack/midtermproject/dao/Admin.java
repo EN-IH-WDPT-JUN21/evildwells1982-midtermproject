@@ -11,7 +11,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
 

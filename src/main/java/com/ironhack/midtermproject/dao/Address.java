@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -22,6 +21,12 @@ public class Address {
 
     private String street;
     private String postcode;
+
+    @OneToOne(mappedBy = "primaryAddress")
+    private AccountHolder primaryHolder;
+
+    @OneToOne(mappedBy = "mailingAddress")
+    private AccountHolder mailingHolder;
 
 
     public Address(String street, String postcode) {

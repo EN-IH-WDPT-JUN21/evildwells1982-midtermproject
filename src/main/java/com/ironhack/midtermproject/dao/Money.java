@@ -1,11 +1,12 @@
 package com.ironhack.midtermproject.dao;
 
+import javax.persistence.Embeddable;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
 
 //Provided as part of project brief, not my own work
-
+@Embeddable
 public class Money {
 
     private static final Currency USD = Currency.getInstance("USD");
