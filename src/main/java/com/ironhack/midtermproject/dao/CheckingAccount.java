@@ -23,18 +23,23 @@ public class CheckingAccount extends Account implements Maintenance, Penalties {
     @Embedded
     @AttributeOverride(name="amount", column = @Column(name="minimum_balance_amount"))
     @AttributeOverride(name="currency", column = @Column(name="minimum_balance_currency"))
-    private Money minimumBalance;
+    private final Money minimumBalance = new Money(new BigDecimal(250));;
 
     @Embedded
     @AttributeOverride(name="amount", column = @Column(name="maintenance_amount"))
     @AttributeOverride(name="currency", column = @Column(name="maintenance_currency"))
-    private Money monthlyMaintenanceFee;
+    private final Money monthlyMaintenanceFee = new Money(new BigDecimal(12));;
 
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Money minimumBalance, Money monthlyMaintenanceFee) {
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey) {
         super(balance, primaryOwner, secondaryOwner);
         setSecretKey(secretKey);
-        this.minimumBalance = new Money(new BigDecimal(250));
-        this.monthlyMaintenanceFee = new Money(new BigDecimal(12));
+
+    }
+
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey) {
+        super(balance, primaryOwner);
+        setSecretKey(secretKey);
+
     }
 
 

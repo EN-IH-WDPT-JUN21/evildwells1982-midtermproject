@@ -1,5 +1,8 @@
 package com.ironhack.midtermproject.dao;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
@@ -7,6 +10,7 @@ import java.util.Currency;
 
 //Provided as part of project brief, not my own work
 @Embeddable
+
 public class Money {
 
     private static final Currency USD = Currency.getInstance("USD");
@@ -14,6 +18,14 @@ public class Money {
 
     private final Currency currency;
     private BigDecimal amount;
+
+    /**
+     * Default Constructor, specifying only default currency
+     */
+
+    public Money(){
+        this.currency = USD;
+    }
 
     /**
      * Class constructor specifying amount, currency, and rounding

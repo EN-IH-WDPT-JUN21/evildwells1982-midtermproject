@@ -32,16 +32,16 @@ public class Transactions {
 
     private final LocalDateTime transactionDateTime = LocalDateTime.now();
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private TransactionTypes transactionType;
 
     @ManyToOne
     @JoinColumn(name = "performedBy")
-    private User performedBy;
+    private Users performedBy;
 
 
     //Constructor for Customers Paying Customers, and admins transferring between accounts
-    public Transactions(Account sourceAccount, Account destinationAccount, Money transactionAmount, User performedBy) {
+    public Transactions(Account sourceAccount, Account destinationAccount, Money transactionAmount, Users performedBy) {
         setSourceAccount(sourceAccount);
         setDestinationAccount(destinationAccount);
         setTransactionAmount(transactionAmount);
@@ -50,7 +50,7 @@ public class Transactions {
     }
 
     //Constructor for paying out to third parties, and for Admins removing money from accounts
-    public Transactions(Account sourceAccount, Money transactionAmount, TransactionTypes transactionType, User performedBy) {
+    public Transactions(Account sourceAccount, Money transactionAmount, TransactionTypes transactionType, Users performedBy) {
         setSourceAccount(sourceAccount);
         setTransactionAmount(transactionAmount);
         setTransactionType(transactionType);
@@ -58,7 +58,7 @@ public class Transactions {
     }
 
     //Constructor for money in from third parties, and for Admins adding money to accounts
-    public Transactions(Money transactionAmount, Account destinationAccount, TransactionTypes transactionType, User performedBy) {
+    public Transactions(Money transactionAmount, Account destinationAccount, TransactionTypes transactionType, Users performedBy) {
         setDestinationAccount(destinationAccount);
         setTransactionAmount(transactionAmount);
         setTransactionType(transactionType);

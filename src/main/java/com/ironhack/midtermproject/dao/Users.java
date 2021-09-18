@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract class User {
+public abstract class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ abstract class User {
     @OneToMany(mappedBy = "performedBy")
     private List<Transactions> transactionList;
 
-    public User(String name) {
+    public Users(String name) {
         setName(name);
     }
 }

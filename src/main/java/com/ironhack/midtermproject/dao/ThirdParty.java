@@ -1,6 +1,5 @@
 package com.ironhack.midtermproject.dao;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
 
-public class ThirdParty extends User{
+public class ThirdParty extends Users {
 
     //change this later
     private final int hashKey = 123456789;

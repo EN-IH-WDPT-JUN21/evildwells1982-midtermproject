@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract class Account implements Penalties {
+public abstract class Account implements Penalties {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +47,7 @@ abstract class Account implements Penalties {
     @AttributeOverride(name="currency", column = @Column(name="penalty_currency"))
     private final Money penaltyFee = new Money(new BigDecimal(40));
 
-    private final Date creationDate = new Date();
+    private final LocalDate creationDate = LocalDate.now();
 
 
     @OneToMany(mappedBy = "sourceAccount")
@@ -61,6 +61,12 @@ abstract class Account implements Penalties {
         setBalance(balance);
         setPrimaryOwner(primaryOwner);
         setSecondaryOwner(secondaryOwner);
+    }
+
+    public Account(Money balance, AccountHolder primaryOwner) {
+        setBalance(balance);
+        setPrimaryOwner(primaryOwner);
+
     }
 
 

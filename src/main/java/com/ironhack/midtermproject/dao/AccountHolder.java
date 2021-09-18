@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -18,9 +18,9 @@ import java.util.List;
 
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
-public class AccountHolder extends User {
+public class AccountHolder extends Users {
 
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @OneToOne
     @JoinColumn(name = "primary_address_id")
@@ -38,10 +38,17 @@ public class AccountHolder extends User {
 
 
 
-    public AccountHolder(String name, Date dateOfBirth, Address primaryAddress, Address mailingAddress) {
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
         super(name);
         setDateOfBirth(dateOfBirth);
         setPrimaryAddress(primaryAddress);
         setMailingAddress(mailingAddress);
+    }
+
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
+        super(name);
+        setDateOfBirth(dateOfBirth);
+        setPrimaryAddress(primaryAddress);
+
     }
 }
