@@ -22,7 +22,7 @@ public class CreditCard extends Account implements Interest {
     @AttributeOverride(name="currency", column = @Column(name="limit_currency"))
     private Money creditLimit = new Money(new BigDecimal(100));
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal interestRate, Money creditLimit) {
+    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal interestRate, BigDecimal creditLimit) {
         super(balance, primaryOwner, secondaryOwner);
         setInterestRate(interestRate);
         setCreditLimit(creditLimit);
@@ -33,9 +33,13 @@ public class CreditCard extends Account implements Interest {
         setInterestRate(interestRate);
     }
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Money creditLimit) {
+    public CreditCard(Money balance, AccountHolder primaryOwner, BigDecimal creditLimit, AccountHolder secondaryOwner) {
         super(balance, primaryOwner, secondaryOwner);
         setCreditLimit(creditLimit);
+    }
+
+    public CreditCard(Money balance, AccountHolder primaryOwner) {
+        super(balance, primaryOwner);
     }
 
     public void setInterestRate(BigDecimal interestRate){
@@ -53,15 +57,15 @@ public class CreditCard extends Account implements Interest {
         }
     }
 
-    public void setCreditLimit(Money creditLimit){
-        if(creditLimit.getAmount().floatValue()<100){
+    public void setCreditLimit(BigDecimal creditLimit){
+        if(creditLimit.floatValue()<100){
             throw new IllegalArgumentException("Minimum Balance cannot be less than 100");
         }
-        else if(creditLimit.getAmount().subtract(new BigDecimal(100000)).floatValue()>0){
-            throw new IllegalArgumentException("Minimum Balance cannot be greater than 1000");
+        else if(creditLimit.subtract(new BigDecimal(100000)).floatValue()>0){
+            throw new IllegalArgumentException("Minimum Balance cannot be greater than 100000");
         }
         else {
-            this.creditLimit = creditLimit;
+            this.creditLimit = new Money(creditLimit);
         }
     }
 

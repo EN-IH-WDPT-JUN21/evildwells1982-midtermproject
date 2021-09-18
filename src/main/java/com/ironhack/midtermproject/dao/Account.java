@@ -24,7 +24,7 @@ public abstract class Account implements Penalties {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountID;
+    private Long accountId;
 
     @Embedded
     @AttributeOverride(name="amount", column = @Column(name="balance_amount"))

@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@PrimaryKeyJoinColumn(referencedColumnName = "userId")
+@PrimaryKeyJoinColumn(referencedColumnName = "userId", name="holderId")
 public class AccountHolder extends Users {
 
     private LocalDate dateOfBirth;

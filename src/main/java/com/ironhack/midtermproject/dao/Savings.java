@@ -49,6 +49,11 @@ public class Savings extends Account implements Interest {
         setMinimumBalance(minimumBalance);
     }
 
+    public Savings(Money balance, AccountHolder primaryOwner, String secretKey) {
+        super(balance, primaryOwner);
+        setSecretKey(secretKey);
+    }
+
     public void setInterestRate(BigDecimal interestRate){
         if(interestRate.floatValue()<0){
             throw new IllegalArgumentException("Interest Rate cannot be less than zero");
