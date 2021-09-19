@@ -6,4 +6,7 @@ public interface IAccountController {
 
 
     List<Object[]> getAccounts(Long userId);
+
+    List<Object[]> getAccountsById(Long accountId);
+
 }

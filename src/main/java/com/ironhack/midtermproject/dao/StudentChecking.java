@@ -25,6 +25,11 @@ public class StudentChecking extends Account {
         setSecretKey(secretKey);
     }
 
+    public StudentChecking(Money balance, AccountHolder primaryOwner, String secretKey) {
+        super(balance, primaryOwner);
+        setSecretKey(secretKey);
+    }
+
 
     public void applyPenalty() {
         //Student Accounts do not have a minimum balance, so a penalty fee does not apply

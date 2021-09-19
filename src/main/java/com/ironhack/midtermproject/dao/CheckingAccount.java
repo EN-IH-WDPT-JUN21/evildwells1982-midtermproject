@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
-public class CheckingAccount extends Account implements Maintenance, Penalties {
+public class CheckingAccount extends Account {
 
     private String secretKey;
     @Embedded

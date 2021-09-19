@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
-public class CreditCard extends Account implements Interest {
+public class CreditCard extends Account {
 
     private BigDecimal interestRate = new BigDecimal(0.2);
 

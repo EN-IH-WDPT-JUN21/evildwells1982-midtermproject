@@ -2,5 +2,5 @@ package com.ironhack.midtermproject.interfaces;
 
 public interface Interest {
 
-    public void applyInterest();
+    public void applyInterest(Long accountId);
 }

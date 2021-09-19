@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
-public class Savings extends Account implements Interest {
+public class Savings extends Account{
 
     private BigDecimal interestRate = new BigDecimal(0.0025);
     private String secretKey;

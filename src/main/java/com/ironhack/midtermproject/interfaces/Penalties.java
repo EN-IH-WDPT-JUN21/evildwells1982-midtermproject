@@ -1,7 +1,9 @@
 package com.ironhack.midtermproject.interfaces;
 
+import com.ironhack.midtermproject.dao.Money;
+
 public interface Penalties {
 
-    public void applyPenalty();
+    public void applyPenalty(Long accountId, Money startBalance, Money endBalance);
 
 }

@@ -15,9 +15,17 @@ public class AccountController implements IAccountController {
     @Autowired
     private AccountRepository accountRepository;
 
+    // Get path for account holders to access their accounts
     @GetMapping("/accounts/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Object[]> getAccounts(@PathVariable(name = "userId") Long userId){
         return accountRepository.findAccountsForCustomerId(userId);
+    }
+
+    // Get path for admins to access account balance with param account id
+    @GetMapping("/account/{accountId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Object[]> getAccountsById(@PathVariable(name = "accountId") Long accountId){
+        return accountRepository.findAccountsForAccountId(accountId);
     }
 }

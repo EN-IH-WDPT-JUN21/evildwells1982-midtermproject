@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query(value= "select account_id, balance_currency, balance_amount from account where primary_id = :passedId or secondary_id = :passedId", nativeQuery = true)
     List<Object[]> findAccountsForCustomerId(@Param("passedId") Long passedId);
 
+    @Query(value= "select account_id, balance_currency, balance_amount from account where account_id = :passedId", nativeQuery = true)
+    List<Object[]> findAccountsForAccountId(@Param("passedId") Long passedId);
 }
