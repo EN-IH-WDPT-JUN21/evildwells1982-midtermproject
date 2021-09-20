@@ -82,8 +82,10 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
                 Money endBalance = new Money (savingsOptional.get().getBalance().getAmount());
                 savingsRepository.save(savingsOptional.get());
                 new Money(endBalance.decreaseAmount(startingBalance));
-                Transactions interestTransaction = new Transactions(savingsOptional.get(),endBalance);
-                transactionsRepository.save(interestTransaction);
+                if(endBalance.getAmount().floatValue()>0) {
+                    Transactions interestTransaction = new Transactions(savingsOptional.get(), endBalance);
+                    transactionsRepository.save(interestTransaction);
+                }
             }
         }
 
@@ -117,8 +119,10 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
                 Money endBalance = new Money (creditCardOptional.get().getBalance().getAmount());
                 creditCardRepository.save(creditCardOptional.get());
                 new Money(endBalance.decreaseAmount(startingBalance));
-                Transactions interestTransaction = new Transactions(creditCardOptional.get(),endBalance);
-                transactionsRepository.save(interestTransaction);
+                if(endBalance.getAmount().floatValue()>0) {
+                    Transactions interestTransaction = new Transactions(creditCardOptional.get(), endBalance);
+                    transactionsRepository.save(interestTransaction);
+                }
             }
         }
 
