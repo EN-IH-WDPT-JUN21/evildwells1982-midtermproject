@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,18 +42,20 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
         Optional<LocalDateTime> lastInterest = transactionsRepository.findLastInterest(accountId);
 
 
+
         int currentYear = LocalDateTime.now().getYear();
         int currentMonth = LocalDateTime.now().getMonthValue();
         int currentDay = LocalDateTime.now().getDayOfMonth();
         int elapsedYears;
+        int elapsedMonths;
 
 
         //For Savings Account, find number of complete elapsed years between now and the creation date, or last interest date,
         // apply compound interest for each elapsed year, then create a new interest transaction for that amount and update the balance
 
         if(savingsOptional.isPresent()){
+            Money startingBalance = new Money(savingsOptional.get().getBalance().getAmount());
             if(savingsOptional.get().getCreationDate().getYear()!=currentYear){
-                Money startingBalance = savingsOptional.get().getBalance();
                 LocalDate creationDate = savingsOptional.get().getCreationDate();
                 if(lastInterest.isPresent()){
                     elapsedYears = currentYear - lastInterest.get().getYear();
@@ -76,9 +79,45 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
                                     savingsOptional.get().getBalance().getAmount()
                                             .multiply(savingsOptional.get().getInterestRate()))));
                 }
+                Money endBalance = new Money (savingsOptional.get().getBalance().getAmount());
                 savingsRepository.save(savingsOptional.get());
-                Money appliedInterest = new Money(savingsOptional.get().getBalance().getAmount().subtract(startingBalance.getAmount()));
-                Transactions interestTransaction = new Transactions(savingsOptional.get(),appliedInterest);
+                new Money(endBalance.decreaseAmount(startingBalance));
+                Transactions interestTransaction = new Transactions(savingsOptional.get(),endBalance);
+                transactionsRepository.save(interestTransaction);
+            }
+        }
+
+        else if(creditCardOptional.isPresent()){
+            Money startingBalance = new Money(creditCardOptional.get().getBalance().getAmount());
+            if(creditCardOptional.get().getCreationDate().getMonthValue()!=currentMonth || creditCardOptional.get().getCreationDate().getYear()!=currentYear){
+                LocalDate creationDate = creditCardOptional.get().getCreationDate();
+                if(lastInterest.isPresent()){
+                    elapsedYears = currentYear - lastInterest.get().getYear();
+                    elapsedMonths = elapsedYears * 12;
+                    elapsedMonths = elapsedMonths + (currentMonth-lastInterest.get().getMonthValue());
+                    if(currentDay<lastInterest.get().getDayOfMonth()){
+                        elapsedMonths --;
+                    }
+                }else{
+                    elapsedYears = currentYear - creationDate.getYear();
+                    elapsedMonths = elapsedYears * 12;
+                    elapsedMonths = elapsedMonths + (currentMonth-creationDate.getMonthValue());
+                    if(currentDay<creationDate.getDayOfMonth()){
+                        elapsedMonths --;
+                    }
+                }
+
+                for(int i=0; i<elapsedMonths;i++){
+                    creditCardOptional.get().setBalance(
+                            new Money(creditCardOptional.get().getBalance().increaseAmount(
+                                    creditCardOptional.get().getBalance().getAmount()
+                                            .multiply(creditCardOptional.get().getInterestRate().divide(new BigDecimal(12),6,RoundingMode.HALF_UP)))));
+                }
+
+                Money endBalance = new Money (creditCardOptional.get().getBalance().getAmount());
+                creditCardRepository.save(creditCardOptional.get());
+                new Money(endBalance.decreaseAmount(startingBalance));
+                Transactions interestTransaction = new Transactions(creditCardOptional.get(),endBalance);
                 transactionsRepository.save(interestTransaction);
             }
         }

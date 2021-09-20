@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
 public class Savings extends Account{
 
+    @Column(name = "interest_rate", precision = 10, scale = 4, columnDefinition = "DECIMAL(10,4)")
     private BigDecimal interestRate = new BigDecimal(0.0025);
     private String secretKey;
 
