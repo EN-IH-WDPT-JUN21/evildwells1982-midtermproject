@@ -4,6 +4,6 @@ import com.ironhack.midtermproject.dao.Money;
 
 public interface Penalties {
 
-    public void applyPenalty(Long accountId, Money startBalance, Money endBalance);
+    public void applyPenalty(Long accountId, Money startBalance);
 
 }

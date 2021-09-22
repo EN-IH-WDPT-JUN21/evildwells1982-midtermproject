@@ -57,6 +57,7 @@ class AccountUtilityTest {
     private StudentChecking account5;
     private Transactions interest1;
     private Transactions interest2;
+    private Transactions maintenance1;
 
     @Autowired
     private AccountUtility accountUtility;
@@ -97,6 +98,9 @@ class AccountUtilityTest {
 
         account7 = new CreditCard(new Money(new BigDecimal(1000)),user1);
         creditCardRepository.save(account7);
+
+        maintenance1 = new Transactions(account1,new Money(new BigDecimal(12)),TransactionTypes.MAINTENANCE);
+        transactionsRepository.save(maintenance1);
 
     }
 
@@ -189,42 +193,86 @@ class AccountUtilityTest {
 
 
     @Test
-    void applyMaintenance() {
+    void applyMaintenance_createdSameMonth_noMaintenanceApplied() {
+        accountUtility.applyMaintenance(account2.getAccountId());
+        BigDecimal resultBalance = (checkingAccountRepository.getById(account2.getAccountId()).getBalance().getAmount());
+        assertEquals(new BigDecimal(2500).setScale(2), resultBalance);
     }
 
     @Test
-    void applyPenalty_checkingAccount_belowMin() {
-        accountUtility.applyPenalty(account1.getAccountId(),new Money(new BigDecimal(500)), new Money(new BigDecimal(100)));
-        BigDecimal resultBalance = (checkingAccountRepository.getById(account1.getAccountId()).getBalance().getAmount());
-        assertEquals(new BigDecimal(3460).setScale(2), resultBalance);
-    }
-
-    @Test
-    void applyPenalty_checkingAccount_aboveMin() {
-        accountUtility.applyPenalty(account1.getAccountId(),new Money(new BigDecimal(500)), new Money(new BigDecimal(250)));
+    void applyMaintenance_lastMaintenanceInSameMonth_noMaintenanceApplied() {
+        accountUtility.applyMaintenance(account1.getAccountId());
         BigDecimal resultBalance = (checkingAccountRepository.getById(account1.getAccountId()).getBalance().getAmount());
         assertEquals(new BigDecimal(3500).setScale(2), resultBalance);
     }
 
     @Test
+    void applyMaintenance_noPreviousMaintenanceAccount2YearsOld() {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate twoYearsAgo = LocalDate.of(now.getYear()-2,now.getMonthValue(),now.getDayOfMonth());
+        accountRepository.updateCreationDate(twoYearsAgo,account2.getAccountId());
+        accountUtility.applyMaintenance(account2.getAccountId());
+        BigDecimal resultBalance = (checkingAccountRepository.getById(account2.getAccountId()).getBalance().getAmount());
+        assertEquals(new BigDecimal(2212).setScale(2, RoundingMode.HALF_UP),resultBalance);
+    }
+
+    @Test
+    void applyMaintenance_lastMaintenanceOneYearAgo() {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate twoYearsAgo = LocalDate.of(now.getYear()-2,now.getMonthValue(),now.getDayOfMonth());
+        LocalDateTime oneYearAgo = LocalDateTime.of(now.getYear()-1,now.getMonthValue(),now.getDayOfMonth(),now.getHour(), now.getMinute());
+        accountRepository.updateCreationDate(twoYearsAgo,account1.getAccountId());
+        transactionsRepository.updateTransactionDate(oneYearAgo,maintenance1.getTransactionId());
+        accountUtility.applyMaintenance(account1.getAccountId());
+        BigDecimal resultBalance = (checkingAccountRepository.getById(account1.getAccountId()).getBalance().getAmount());
+        assertEquals(new BigDecimal(3356).setScale(2,RoundingMode.HALF_UP), resultBalance);
+    }
+
+    @Test
+    void applyPenalty_checkingAccount_belowMin() {
+        account1.setBalance(new Money(new BigDecimal(100)));
+        checkingAccountRepository.save(account1);
+        accountUtility.applyPenalty(account1.getAccountId(),new Money(new BigDecimal(500)));
+        BigDecimal resultBalance = (checkingAccountRepository.getById(account1.getAccountId()).getBalance().getAmount());
+        assertEquals(new BigDecimal(60).setScale(2), resultBalance);
+    }
+
+    @Test
+    void applyPenalty_checkingAccount_aboveMin() {
+        account1.setBalance(new Money(new BigDecimal(250)));
+        checkingAccountRepository.save(account1);
+        accountUtility.applyPenalty(account1.getAccountId(),new Money(new BigDecimal(500)));
+        BigDecimal resultBalance = (checkingAccountRepository.getById(account1.getAccountId()).getBalance().getAmount());
+        assertEquals(new BigDecimal(250).setScale(2), resultBalance);
+    }
+
+    @Test
     void applyPenalty_savingsAccount() {
-        accountUtility.applyPenalty(account3.getAccountId(),new Money(new BigDecimal(1500)), new Money(new BigDecimal(100)));
+        account3.setBalance(new Money(new BigDecimal(100)));
+        savingsRepository.save(account3);
+        accountUtility.applyPenalty(account3.getAccountId(),new Money(new BigDecimal(1500)));
         BigDecimal resultBalance = (savingsRepository.getById(account3.getAccountId()).getBalance().getAmount());
-        assertEquals(new BigDecimal(4960).setScale(2), resultBalance);
+        assertEquals(new BigDecimal(60).setScale(2), resultBalance);
     }
 
     @Test
     void applyPenalty_studentCheckingAccount() {
-        accountUtility.applyPenalty(account5.getAccountId(),new Money(new BigDecimal(500)), new Money(new BigDecimal(100)));
+        account5.setBalance(new Money(new BigDecimal(100)));
+        studentCheckingRepository.save(account5);
+        accountUtility.applyPenalty(account5.getAccountId(),new Money(new BigDecimal(500)));
         BigDecimal resultBalance = (studentCheckingRepository.getById(account5.getAccountId()).getBalance().getAmount());
-        assertEquals(new BigDecimal(2500).setScale(2), resultBalance);
+        assertEquals(new BigDecimal(100).setScale(2), resultBalance);
     }
 
     @Test
     void applyPenalty_creditCard() {
-        accountUtility.applyPenalty(account4.getAccountId(),new Money(new BigDecimal(500)), new Money(new BigDecimal(100)));
+        account4.setBalance(new Money(new BigDecimal(100)));
+        creditCardRepository.save(account4);
+        accountUtility.applyPenalty(account4.getAccountId(),new Money(new BigDecimal(500)));
         BigDecimal resultBalance = (creditCardRepository.getById(account4.getAccountId()).getBalance().getAmount());
-        assertEquals(new BigDecimal(1000).setScale(2), resultBalance);
+        assertEquals(new BigDecimal(100).setScale(2), resultBalance);
     }
 
 

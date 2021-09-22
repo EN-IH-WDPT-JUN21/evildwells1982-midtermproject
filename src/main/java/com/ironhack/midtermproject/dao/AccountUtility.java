@@ -128,13 +128,60 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
 
     }
 
-    public void applyMaintenance(){
+    public void applyMaintenance(Long accountId){
 
+        Optional<CheckingAccount> checkingAccountOptional = checkingAccountRepository.findById(accountId);
+
+        Optional<LocalDateTime> lastMaintenance = transactionsRepository.findLastMaintenance(accountId);
+
+        int currentYear = LocalDateTime.now().getYear();
+        int currentMonth = LocalDateTime.now().getMonthValue();
+        int currentDay = LocalDateTime.now().getDayOfMonth();
+        int elapsedYears;
+        int elapsedMonths;
+
+
+        if(checkingAccountOptional.isPresent()){
+            Money startingBalance = new Money(checkingAccountOptional.get().getBalance().getAmount());
+            if(checkingAccountOptional.get().getCreationDate().getMonthValue()!=currentMonth || checkingAccountOptional.get().getCreationDate().getYear()!=currentYear){
+                LocalDate creationDate = checkingAccountOptional.get().getCreationDate();
+                if(lastMaintenance.isPresent()){
+                    elapsedYears = currentYear - lastMaintenance.get().getYear();
+                    elapsedMonths = elapsedYears * 12;
+                    elapsedMonths = elapsedMonths + (currentMonth-lastMaintenance.get().getMonthValue());
+                    if(currentDay<lastMaintenance.get().getDayOfMonth()){
+                        elapsedMonths --;
+                    }
+                }else{
+                    elapsedYears = currentYear - creationDate.getYear();
+                    elapsedMonths = elapsedYears * 12;
+                    elapsedMonths = elapsedMonths + (currentMonth-creationDate.getMonthValue());
+                    if(currentDay<creationDate.getDayOfMonth()){
+                        elapsedMonths --;
+                    }
+                }
+
+                for(int i=0; i<elapsedMonths;i++){
+                    checkingAccountOptional.get().setBalance(
+                            new Money(checkingAccountOptional.get().getBalance().decreaseAmount(
+                                    checkingAccountOptional.get().getMonthlyMaintenanceFee()
+                                            )));
+                }
+
+                Money endBalance = new Money (checkingAccountOptional.get().getBalance().getAmount());
+                checkingAccountRepository.save(checkingAccountOptional.get());
+                new Money(endBalance.decreaseAmount(startingBalance));
+                if(endBalance.getAmount().floatValue()<0) {
+                    Transactions maintenanceTransaction = new Transactions(checkingAccountOptional.get(), endBalance,TransactionTypes.MAINTENANCE);
+                    transactionsRepository.save(maintenanceTransaction);
+                }
+            }
+        }
 
     }
 
     //Applies Penalty Fees to eligible accounts, and adds a transaction into the transactions table
-    public void applyPenalty(Long accountId, Money startBalance, Money endBalance){
+    public void applyPenalty(Long accountId, Money startBalance){
 
         Optional<CheckingAccount> checkingAccountOptional = checkingAccountRepository.findById(accountId);
         Optional<Savings> savingsOptional = savingsRepository.findById(accountId);
@@ -142,6 +189,7 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
         if(checkingAccountOptional.isPresent()){
             Money checkingMinimum = checkingAccountOptional.get().getMinimumBalance();
             Money checkingPenalty = checkingAccountOptional.get().getPenaltyFee();
+            Money endBalance = new Money(checkingAccountOptional.get().getBalance().getAmount());
             if(startBalance.getAmount().compareTo(checkingMinimum.getAmount())>0 && endBalance.getAmount().compareTo(checkingMinimum.getAmount())<0){
                 checkingAccountOptional.get().setBalance(new Money(checkingAccountOptional.get().getBalance().decreaseAmount(checkingPenalty)));
                 checkingAccountRepository.save(checkingAccountOptional.get());
@@ -151,6 +199,7 @@ public class AccountUtility implements Interest, Maintenance, Penalties {
         } else if(savingsOptional.isPresent()){
             Money savingsMinimum = savingsOptional.get().getMinimumBalance();
             Money savingsPenalty = savingsOptional.get().getPenaltyFee();
+            Money endBalance = new Money(savingsOptional.get().getBalance().getAmount());
             if(startBalance.getAmount().compareTo(savingsMinimum.getAmount())>0 && endBalance.getAmount().compareTo(savingsMinimum.getAmount())<0){
                 savingsOptional.get().setBalance(new Money(savingsOptional.get().getBalance().decreaseAmount(savingsPenalty)));
                 savingsRepository.save(savingsOptional.get());
