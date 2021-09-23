@@ -1,6 +1,6 @@
 package com.ironhack.midtermproject.repository;
 
-import com.ironhack.midtermproject.dao.Account;
+import com.ironhack.midtermproject.dao.accounts.Account;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;

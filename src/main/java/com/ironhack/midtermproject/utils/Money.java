@@ -1,7 +1,4 @@
-package com.ironhack.midtermproject.dao;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+package com.ironhack.midtermproject.utils;
 
 import javax.persistence.Embeddable;
 import java.math.RoundingMode;

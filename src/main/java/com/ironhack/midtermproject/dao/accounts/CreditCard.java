@@ -1,6 +1,7 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.dao.accounts;
 
-import com.ironhack.midtermproject.interfaces.Interest;
+import com.ironhack.midtermproject.utils.Money;
+import com.ironhack.midtermproject.dao.roles.AccountHolder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

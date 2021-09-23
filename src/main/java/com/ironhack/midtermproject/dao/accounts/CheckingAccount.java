@@ -1,7 +1,7 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.dao.accounts;
 
-import com.ironhack.midtermproject.interfaces.Maintenance;
-import com.ironhack.midtermproject.interfaces.Penalties;
+import com.ironhack.midtermproject.utils.Money;
+import com.ironhack.midtermproject.dao.roles.AccountHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

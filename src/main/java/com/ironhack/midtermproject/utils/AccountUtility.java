@@ -1,5 +1,9 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.utils;
 
+import com.ironhack.midtermproject.dao.accounts.CheckingAccount;
+import com.ironhack.midtermproject.dao.accounts.CreditCard;
+import com.ironhack.midtermproject.dao.accounts.Savings;
+import com.ironhack.midtermproject.dao.accounts.Transactions;
 import com.ironhack.midtermproject.enums.TransactionTypes;
 import com.ironhack.midtermproject.interfaces.Interest;
 import com.ironhack.midtermproject.interfaces.Maintenance;

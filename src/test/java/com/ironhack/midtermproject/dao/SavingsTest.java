@@ -1,9 +1,13 @@
 package com.ironhack.midtermproject.dao;
 
+import com.ironhack.midtermproject.dao.accounts.Savings;
+import com.ironhack.midtermproject.dao.roles.AccountHolder;
+import com.ironhack.midtermproject.dao.roles.Address;
 import com.ironhack.midtermproject.repository.AccountHolderRepository;
 import com.ironhack.midtermproject.repository.AddressRepository;
 import com.ironhack.midtermproject.repository.CheckingAccountRepository;
 import com.ironhack.midtermproject.repository.SavingsRepository;
+import com.ironhack.midtermproject.utils.Money;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

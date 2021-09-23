@@ -1,6 +1,9 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.dao.accounts;
 
+import com.ironhack.midtermproject.dao.accounts.Account;
+import com.ironhack.midtermproject.dao.roles.Users;
 import com.ironhack.midtermproject.enums.TransactionTypes;
+import com.ironhack.midtermproject.utils.Money;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

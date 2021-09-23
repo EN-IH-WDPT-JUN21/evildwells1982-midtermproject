@@ -1,4 +1,4 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.dao.roles;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,20 +7,16 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-
-
+@Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
 
-public class ThirdParty extends Users {
+public class Admin extends Users {
 
-    //change this later
-    private final int hashKey = 123456789;
 
-    public ThirdParty(String name) {
+    public Admin(String name) {
         super(name);
     }
 }

@@ -1,5 +1,8 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.utils;
 
+import com.ironhack.midtermproject.dao.accounts.*;
+import com.ironhack.midtermproject.dao.roles.AccountHolder;
+import com.ironhack.midtermproject.dao.roles.Address;
 import com.ironhack.midtermproject.enums.TransactionTypes;
 import com.ironhack.midtermproject.repository.*;
 import org.junit.jupiter.api.AfterEach;
@@ -7,10 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;

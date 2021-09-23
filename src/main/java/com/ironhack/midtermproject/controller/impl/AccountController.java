@@ -1,9 +1,8 @@
 package com.ironhack.midtermproject.controller.impl;
 
 import com.ironhack.midtermproject.controller.interfaces.IAccountController;
-import com.ironhack.midtermproject.dao.Account;
-import com.ironhack.midtermproject.dao.AccountUtility;
-import com.ironhack.midtermproject.dao.Money;
+import com.ironhack.midtermproject.utils.AccountUtility;
+import com.ironhack.midtermproject.utils.Money;
 import com.ironhack.midtermproject.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController

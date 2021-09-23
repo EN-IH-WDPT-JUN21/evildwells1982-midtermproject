@@ -1,7 +1,7 @@
-package com.ironhack.midtermproject.dao;
+package com.ironhack.midtermproject.dao.accounts;
 
-import com.ironhack.midtermproject.interfaces.Interest;
-import lombok.AllArgsConstructor;
+import com.ironhack.midtermproject.utils.Money;
+import com.ironhack.midtermproject.dao.roles.AccountHolder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "accountID")
-public class Savings extends Account{
+public class Savings extends Account {
 
     @Column(name = "interest_rate", precision = 10, scale = 4, columnDefinition = "DECIMAL(10,4)")
     private BigDecimal interestRate = new BigDecimal(0.0025);
