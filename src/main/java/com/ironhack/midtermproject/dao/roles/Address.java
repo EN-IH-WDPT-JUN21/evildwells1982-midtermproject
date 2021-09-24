@@ -1,5 +1,6 @@
 package com.ironhack.midtermproject.dao.roles;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ironhack.midtermproject.dao.roles.AccountHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +28,11 @@ public class Address {
     @NotBlank(message = "You must provide a Postcode")
     private String postcode;
 
+    @JsonBackReference
     @OneToOne(mappedBy = "primaryAddress")
     private AccountHolder primaryHolder;
 
+    @JsonBackReference
     @OneToOne(mappedBy = "mailingAddress")
     private AccountHolder mailingHolder;
 

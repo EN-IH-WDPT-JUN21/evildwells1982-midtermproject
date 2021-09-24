@@ -1,6 +1,7 @@
 package com.ironhack.midtermproject.dao.roles;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ironhack.midtermproject.dao.accounts.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,17 +25,21 @@ public class AccountHolder extends Users {
 
     private LocalDate dateOfBirth;
 
+    @JsonManagedReference
     @OneToOne
     @JoinColumn(name = "primary_address_id")
     private Address primaryAddress;
 
+    @JsonManagedReference
     @OneToOne
     @JoinColumn(name = "mailing_address_id")
     private Address mailingAddress;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "primaryOwner")
     private List<Account> primaryAccountList;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "secondaryOwner")
     private List<Account> secondaryAccountList;
 

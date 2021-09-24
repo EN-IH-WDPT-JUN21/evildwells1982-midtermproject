@@ -22,7 +22,7 @@ public class UserController implements IUserController {
     @Autowired
     ThirdPartyRepository thirdPartyRepository;
 
-    @PostMapping("/thirdparty")
+    @PostMapping("/newthirdparty")
     @ResponseStatus(HttpStatus.CREATED)
     public ThirdParty newThirdParty(@RequestBody @Valid ThirdParty thirdParty){
         return thirdPartyRepository.save(thirdParty);

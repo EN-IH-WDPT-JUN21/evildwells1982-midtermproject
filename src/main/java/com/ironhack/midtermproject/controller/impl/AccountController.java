@@ -1,13 +1,18 @@
 package com.ironhack.midtermproject.controller.impl;
 
+import com.ironhack.midtermproject.controller.dto.AccountDTO;
 import com.ironhack.midtermproject.controller.interfaces.IAccountController;
+import com.ironhack.midtermproject.dao.accounts.Account;
+import com.ironhack.midtermproject.service.interfaces.IAccountService;
 import com.ironhack.midtermproject.utils.AccountUtility;
 import com.ironhack.midtermproject.utils.Money;
 import com.ironhack.midtermproject.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -20,6 +25,9 @@ public class AccountController implements IAccountController {
 
     @Autowired
     private AccountUtility accountUtility;
+
+    @Autowired
+    private IAccountService accountService;
 
     // Get path for account holders to access their accounts
     @GetMapping("/accounts/{userId}")
@@ -53,5 +61,22 @@ public class AccountController implements IAccountController {
         }
 
         return accountRepository.findAccountsForAccountId(accountId);
+    }
+
+    //Post Path for admins to create new accounts, takes a path variable and body
+    @PostMapping("/newaccount/{accountType}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account newAccount(@PathVariable(name = "accountType") String accountType, @RequestBody @Valid AccountDTO accountDTO){
+
+       if(accountType.toUpperCase().equals("CHECKING")){
+        return accountService.checkingAccount(new Money(accountDTO.getBalance()),accountDTO.getSecretKey(),accountDTO.getPrimaryId(),accountDTO.getSecondaryId());
+
+       }else if(accountType.toUpperCase().equals("SAVINGS")){
+
+           } else if(accountType.toUpperCase().equals("CREDITCARD")){
+
+                }
+
+       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something has gone wrong");
     }
 }
