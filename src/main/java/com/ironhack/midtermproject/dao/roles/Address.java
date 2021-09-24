@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 
 @Getter
@@ -20,7 +21,10 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long AddressId;
 
+    @NotBlank(message = "You must provide a street address")
     private String street;
+
+    @NotBlank(message = "You must provide a Postcode")
     private String postcode;
 
     @OneToOne(mappedBy = "primaryAddress")

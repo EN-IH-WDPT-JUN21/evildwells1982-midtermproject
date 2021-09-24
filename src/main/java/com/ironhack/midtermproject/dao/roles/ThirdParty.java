@@ -1,16 +1,19 @@
 package com.ironhack.midtermproject.dao.roles;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 
 
 @PrimaryKeyJoinColumn(referencedColumnName = "userId")
@@ -18,9 +21,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class ThirdParty extends Users {
 
     //change this later
-    private final int hashKey = 123456789;
+    @NotBlank(message = "Third Parties must have a hashkey")
+    private String hashKey;
 
-    public ThirdParty(String name) {
+    public ThirdParty(String name, String hashKey) {
         super(name);
+        setHashKey(hashKey);
     }
 }

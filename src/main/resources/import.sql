@@ -20,6 +20,9 @@ INSERT INTO account_holder (date_of_birth, mailing_address_id, primary_address_i
 INSERT INTO account (account_status, balance_amount, balance_currency, creation_date, penalty_amount, penalty_currency, primary_id, secondary_id) VALUES ('ACTIVE', 5500.00, 'USD', '2010-09-18',40,'USD',4,2);
 INSERT INTO checking_account (minimum_balance_amount, minimum_balance_currency, maintenance_amount, maintenance_currency, secret_key, account_id) values (250.00, 'USD', 12.00, 'USD', 'SomeSecretkey', 3);
 
+INSERT INTO users (name) VALUES ('TestThirdParty1');
+INSERT INTO third_party (hash_key, user_id) VALUES ('T3stTh4rd',5);
+
 
 
 
