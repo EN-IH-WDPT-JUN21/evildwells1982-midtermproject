@@ -9,7 +9,7 @@ INSERT INTO checking_account (minimum_balance_amount, minimum_balance_currency, 
 
 INSERT INTO address (postcode, street) VALUES ('LE204GH', '40 Avenue Street');
 INSERT INTO users (name) VALUES ('Pete Peterson');
-INSERT INTO account_holder (date_of_birth, mailing_address_id, primary_address_id, holder_id) VALUES ('1960-02-11', null, 2, 3);
+INSERT INTO account_holder (date_of_birth, mailing_address_id, primary_address_id, holder_id) VALUES ('2020-02-11', null, 2, 3);
 INSERT INTO account (account_status, balance_amount, balance_currency, creation_date, penalty_amount, penalty_currency, primary_id, secondary_id) VALUES ('ACTIVE', 1500.00, 'USD', '2020-06-10',40,'USD',3,null);
 INSERT INTO checking_account (minimum_balance_amount, minimum_balance_currency, maintenance_amount, maintenance_currency, secret_key, account_id) values (250.00, 'USD', 12.00, 'USD', 'SomeSecretkey', 2);
 

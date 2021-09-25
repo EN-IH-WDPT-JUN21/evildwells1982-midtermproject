@@ -37,6 +37,19 @@ public class Savings extends Account {
         setSecretKey(secretKey);
     }
 
+    public Savings(Money balance, AccountHolder primaryOwner, BigDecimal interestRate, String secretKey) {
+        super(balance, primaryOwner);
+        setInterestRate(interestRate);
+        setSecretKey(secretKey);
+    }
+
+    public Savings(Money balance, AccountHolder primaryOwner, BigDecimal interestRate, String secretKey, BigDecimal minimumBalance) {
+        super(balance, primaryOwner);
+        setInterestRate(interestRate);
+        setSecretKey(secretKey);
+        setMinimumBalance(minimumBalance);
+    }
+
     public Savings(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, BigDecimal minimumBalance) {
         super(balance, primaryOwner, secondaryOwner);
         setSecretKey(secretKey);
@@ -54,6 +67,12 @@ public class Savings extends Account {
         super(balance, primaryOwner);
         setSecretKey(secretKey);
     }
+    public Savings(Money balance, AccountHolder primaryOwner, String secretKey, BigDecimal minimumBalance) {
+        super(balance, primaryOwner);
+        setSecretKey(secretKey);
+    }
+
+
 
     public void setInterestRate(BigDecimal interestRate){
         if(interestRate.floatValue()<0){
