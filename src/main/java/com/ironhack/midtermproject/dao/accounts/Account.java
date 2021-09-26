@@ -34,12 +34,12 @@ public abstract class Account{
     @AttributeOverride(name="currency", column = @Column(name="balance_currency"))
     private Money balance;
 
-    @JsonBackReference
+    @JsonBackReference(value = "primary-owner")
     @ManyToOne
     @JoinColumn(name = "primaryId")
     private AccountHolder primaryOwner;
 
-    @JsonBackReference
+    @JsonBackReference(value = "secondary-owner")
     @ManyToOne
     @JoinColumn(name = "secondaryId")
     private AccountHolder secondaryOwner;

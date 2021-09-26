@@ -1,13 +1,9 @@
 package com.ironhack.midtermproject.controller.dto;
 
-import com.ironhack.midtermproject.dao.roles.AccountHolder;
-import com.ironhack.midtermproject.utils.Money;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Getter
@@ -16,17 +12,34 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AccountDTO {
 
+    @NotNull
+    @Digits(integer=10,fraction = 2,message="Wrong balance format")
     private BigDecimal balance;
+
 
     private String secretKey;
 
+    @NotNull
     private Long primaryId;
 
     private Long secondaryId;
 
     private BigDecimal interestRate;
 
-    private Money creditLimit;
+    private BigDecimal minimumBalance;
+
+    private BigDecimal creditLimit;
 
 
+    public AccountDTO(BigDecimal balance, String secretKey, Long primaryId) {
+        this.balance = balance;
+        this.secretKey = secretKey;
+        this.primaryId = primaryId;
+
+    }
+
+    public AccountDTO(BigDecimal balance, Long primaryId) {
+        this.balance = balance;
+        this.primaryId = primaryId;
+    }
 }

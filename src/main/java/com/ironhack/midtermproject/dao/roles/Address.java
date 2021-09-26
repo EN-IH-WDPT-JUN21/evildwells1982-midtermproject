@@ -28,11 +28,11 @@ public class Address {
     @NotBlank(message = "You must provide a Postcode")
     private String postcode;
 
-    @JsonBackReference
+    @JsonBackReference(value = "primary-address")
     @OneToOne(mappedBy = "primaryAddress")
     private AccountHolder primaryHolder;
 
-    @JsonBackReference
+    @JsonBackReference(value = "mailing-address")
     @OneToOne(mappedBy = "mailingAddress")
     private AccountHolder mailingHolder;
 

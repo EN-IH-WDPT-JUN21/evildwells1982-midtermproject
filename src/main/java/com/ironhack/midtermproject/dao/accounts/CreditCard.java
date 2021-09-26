@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class CreditCard extends Account {
 
     @Column(name = "interest_rate", precision = 10, scale = 4, columnDefinition = "DECIMAL(10,4)")
-    private BigDecimal interestRate = new BigDecimal(0.2);
+    private BigDecimal interestRate = new BigDecimal("0.2");
 
     @Embedded
     @AttributeOverride(name="amount", column = @Column(name="limit_amount"))
@@ -26,6 +26,12 @@ public class CreditCard extends Account {
 
     public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal interestRate, BigDecimal creditLimit) {
         super(balance, primaryOwner, secondaryOwner);
+        setInterestRate(interestRate);
+        setCreditLimit(creditLimit);
+    }
+
+    public CreditCard(Money balance, AccountHolder primaryOwner, BigDecimal interestRate, BigDecimal creditLimit) {
+        super(balance, primaryOwner);
         setInterestRate(interestRate);
         setCreditLimit(creditLimit);
     }
@@ -39,6 +45,15 @@ public class CreditCard extends Account {
         super(balance, primaryOwner, secondaryOwner);
         setCreditLimit(creditLimit);
     }
+    public CreditCard(Money balance, AccountHolder primaryOwner, BigDecimal creditLimit) {
+        super(balance, primaryOwner);
+        setCreditLimit(creditLimit);
+    }
+
+    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+        super(balance, primaryOwner, secondaryOwner);
+
+    }
 
     public CreditCard(Money balance, AccountHolder primaryOwner) {
         super(balance, primaryOwner);
@@ -48,10 +63,10 @@ public class CreditCard extends Account {
         if(interestRate.floatValue()<0){
             throw new IllegalArgumentException("Interest Rate cannot be less than zero");
         }
-        else if(interestRate.subtract(new BigDecimal(0.2)).floatValue()>0){
+        else if(interestRate.compareTo(new BigDecimal("0.2"))>0){
             throw new IllegalArgumentException("Interest Rate cannot be greater than 0.2");
         }
-        else if(interestRate.subtract(new BigDecimal(0.1)).floatValue()<0){
+        else if(interestRate.compareTo(new BigDecimal("0.1"))<0){
             throw new IllegalArgumentException("Interest Rate cannot be lower than 0.1");
         }
         else {
@@ -60,10 +75,10 @@ public class CreditCard extends Account {
     }
 
     public void setCreditLimit(BigDecimal creditLimit){
-        if(creditLimit.floatValue()<100){
+        if(creditLimit.compareTo(new BigDecimal(100))<0){
             throw new IllegalArgumentException("Minimum Balance cannot be less than 100");
         }
-        else if(creditLimit.subtract(new BigDecimal(100000)).floatValue()>0){
+        else if(creditLimit.compareTo(new BigDecimal(100000))>0){
             throw new IllegalArgumentException("Minimum Balance cannot be greater than 100000");
         }
         else {
