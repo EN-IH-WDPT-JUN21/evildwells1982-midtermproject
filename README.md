@@ -40,3 +40,31 @@ post /newaccount/creditcard
 "interestRate": 0.1 (optional)
 
 }
+
+Post /transferfunds/{accountId}
+
+{
+
+"destinationAccount": 3,
+"holderName": "Jeff Jefferson",
+"transferAmount": 100
+
+}
+
+Patch /updatebalance/{accountId}
+
+{
+
+"balance": 500
+
+}
+
+Post /sendfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh4rd
+
+{
+
+"amount": 300,
+"accountId": 1,
+"secretKey": "SomeSecretkey"
+
+}

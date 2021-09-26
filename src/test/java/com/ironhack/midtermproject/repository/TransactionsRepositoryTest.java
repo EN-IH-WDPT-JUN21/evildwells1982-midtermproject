@@ -45,6 +45,10 @@ class TransactionsRepositoryTest {
     @Autowired
     private TransactionsRepository transactionsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+
     private AccountHolder user1;
     private AccountHolder user2;
 
@@ -102,6 +106,7 @@ class TransactionsRepositoryTest {
         studentCheckingRepository.deleteAll();
         creditCardRepository.deleteAll();
         accountHolderRepository.deleteAll();
+        userRepository.deleteAll();
         addressRepository.deleteAll();
     }
 

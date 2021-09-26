@@ -1,5 +1,7 @@
 package com.ironhack.midtermproject.dao.accounts;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ironhack.midtermproject.dao.accounts.Account;
 import com.ironhack.midtermproject.dao.roles.Users;
 import com.ironhack.midtermproject.enums.TransactionTypes;
@@ -22,10 +24,12 @@ public class Transactions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transactionId;
 
+    @JsonBackReference(value = "source_account")
     @ManyToOne
     @JoinColumn(name = "sourceAccount")
     private Account sourceAccount;
 
+    @JsonBackReference(value = "destination_account")
     @ManyToOne
     @JoinColumn(name = "destinationAccount")
     private Account destinationAccount;
@@ -38,6 +42,7 @@ public class Transactions {
     @Enumerated(EnumType.STRING)
     private TransactionTypes transactionType;
 
+    @JsonBackReference(value = "performed_by")
     @ManyToOne
     @JoinColumn(name = "performedBy")
     private Users performedBy;

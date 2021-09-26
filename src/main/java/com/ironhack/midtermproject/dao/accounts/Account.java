@@ -1,6 +1,7 @@
 package com.ironhack.midtermproject.dao.accounts;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ironhack.midtermproject.dao.roles.AccountHolder;
 import com.ironhack.midtermproject.utils.Money;
 import com.ironhack.midtermproject.enums.AccountStatus;
@@ -54,10 +55,11 @@ public abstract class Account{
 
     private final LocalDate creationDate = LocalDate.now();
 
-
+    @JsonManagedReference(value = "source_account")
     @OneToMany(mappedBy = "sourceAccount")
     private List<Transactions> transactionOut;
 
+    @JsonManagedReference(value = "destination_account")
     @OneToMany(mappedBy = "destinationAccount")
     private List<Transactions> transactionIn;
 

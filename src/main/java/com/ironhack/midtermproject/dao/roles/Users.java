@@ -1,5 +1,7 @@
 package com.ironhack.midtermproject.dao.roles;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ironhack.midtermproject.dao.accounts.Transactions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +29,12 @@ public abstract class Users {
     @NotBlank(message = "All Users Must Have a Name")
     private String name;
 
+    @JsonManagedReference(value = "performed_by")
     @OneToMany(mappedBy = "performedBy")
     private List<Transactions> transactionList;
+
+
+
 
     public Users(String name) {
         setName(name);
