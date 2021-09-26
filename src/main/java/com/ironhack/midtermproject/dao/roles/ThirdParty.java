@@ -25,7 +25,7 @@ public class ThirdParty extends Users {
     private String hashKey;
 
     public ThirdParty(String name, String hashKey) {
-        super(name);
+        super(name,"Third_Party");
         setHashKey(hashKey);
     }
 }

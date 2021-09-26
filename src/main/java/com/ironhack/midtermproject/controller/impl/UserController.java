@@ -25,7 +25,8 @@ public class UserController implements IUserController {
     @PostMapping("/newthirdparty")
     @ResponseStatus(HttpStatus.CREATED)
     public ThirdParty newThirdParty(@RequestBody @Valid ThirdParty thirdParty){
-        return thirdPartyRepository.save(thirdParty);
+        ThirdParty createdParty = new ThirdParty(thirdParty.getName(), thirdParty.getHashKey());
+        return thirdPartyRepository.save(createdParty);
     }
 
 

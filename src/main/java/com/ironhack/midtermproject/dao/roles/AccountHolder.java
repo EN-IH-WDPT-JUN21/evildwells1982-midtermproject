@@ -46,14 +46,14 @@ public class AccountHolder extends Users {
 
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
-        super(name);
+        super(name,"Account_Holder");
         setDateOfBirth(dateOfBirth);
         setPrimaryAddress(primaryAddress);
         setMailingAddress(mailingAddress);
     }
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
-        super(name);
+        super(name, "Account_Holder");
         setDateOfBirth(dateOfBirth);
         setPrimaryAddress(primaryAddress);
 

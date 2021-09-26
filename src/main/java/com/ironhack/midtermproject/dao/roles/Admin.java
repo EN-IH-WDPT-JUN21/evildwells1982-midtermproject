@@ -17,6 +17,6 @@ public class Admin extends Users {
 
 
     public Admin(String name) {
-        super(name);
+        super(name, "Admin");
     }
 }

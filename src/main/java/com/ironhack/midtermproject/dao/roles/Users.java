@@ -33,10 +33,17 @@ public abstract class Users {
     @OneToMany(mappedBy = "performedBy")
     private List<Transactions> transactionList;
 
+    private String username;
+
+    private String password;
+
+    private String roles;
 
 
-
-    public Users(String name) {
+    public Users(String name, String roles) {
         setName(name);
+        setRoles(roles);
+        setUsername(name.replaceAll("\\s",""));
+        setPassword(name.replaceAll("\\s",""));
     }
 }
