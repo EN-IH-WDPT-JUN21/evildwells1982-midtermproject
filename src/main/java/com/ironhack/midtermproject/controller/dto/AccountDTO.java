@@ -31,4 +31,15 @@ public class AccountDTO {
     private BigDecimal creditLimit;
 
 
+    public AccountDTO(BigDecimal balance, String secretKey, Long primaryId) {
+        this.balance = balance;
+        this.secretKey = secretKey;
+        this.primaryId = primaryId;
+
+    }
+
+    public AccountDTO(BigDecimal balance, Long primaryId) {
+        this.balance = balance;
+        this.primaryId = primaryId;
+    }
 }

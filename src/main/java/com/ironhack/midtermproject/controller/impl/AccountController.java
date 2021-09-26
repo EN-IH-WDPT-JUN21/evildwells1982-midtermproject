@@ -77,7 +77,7 @@ public class AccountController implements IAccountController {
 
            } else if(accountType.toUpperCase().equals("CREDITCARD")){
 
-            return accountService.creditCard(new Money(accountDTO.getBalance()),accountDTO.getPrimaryId(),accountDTO.getSecondaryId(),accountDTO.getCreditLimit(),accountDTO.getInterestRate());
+            return accountService.creditCard(new Money(accountDTO.getBalance()),accountDTO.getPrimaryId(),accountDTO.getSecondaryId(), accountDTO.getInterestRate(), accountDTO.getCreditLimit());
 
                 }
 

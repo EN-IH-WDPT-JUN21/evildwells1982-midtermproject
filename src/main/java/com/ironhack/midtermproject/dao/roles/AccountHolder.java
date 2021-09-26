@@ -25,21 +25,21 @@ public class AccountHolder extends Users {
 
     private LocalDate dateOfBirth;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "primary-address")
     @OneToOne
     @JoinColumn(name = "primary_address_id")
     private Address primaryAddress;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "mailing-address")
     @OneToOne
     @JoinColumn(name = "mailing_address_id")
     private Address mailingAddress;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "primary-owner")
     @OneToMany(mappedBy = "primaryOwner")
     private List<Account> primaryAccountList;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "secondary-owner")
     @OneToMany(mappedBy = "secondaryOwner")
     private List<Account> secondaryAccountList;
 

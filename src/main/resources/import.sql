@@ -1,4 +1,4 @@
-INSERT INTO users (name) VALUES ('System');
+INSERT INTO users (name) VALUES ('Admin');
 INSERT INTO admin (user_id) Values (1);
 
 INSERT INTO address (postcode, street) VALUES ('LE191AA', '39 Street Street');

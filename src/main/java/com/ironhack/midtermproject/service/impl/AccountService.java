@@ -175,7 +175,7 @@ public class AccountService implements IAccountService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CreditLimit outside accepted range");
         }
 
-        if(interestRate != null && (interestRate.compareTo(new BigDecimal(0.1))<0 || interestRate.compareTo(new BigDecimal(0.2))>0)){
+        if(interestRate != null && (interestRate.compareTo(new BigDecimal("0.1"))<0 || interestRate.compareTo(new BigDecimal("0.2"))>0)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "interestRate outside accepted range");
         }
 
