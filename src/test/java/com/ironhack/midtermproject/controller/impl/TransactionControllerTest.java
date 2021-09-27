@@ -254,7 +254,7 @@ class TransactionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated()).andReturn();
         assertTrue(mvcResult.getResponse().getContentAsString().contains("ACCOUNTTOTHIRDPARTY"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("-300"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("300"));
 
     }
 

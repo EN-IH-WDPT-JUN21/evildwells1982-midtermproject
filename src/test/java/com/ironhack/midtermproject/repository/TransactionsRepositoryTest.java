@@ -62,6 +62,11 @@ class TransactionsRepositoryTest {
 
     private Transactions interest1;
 
+    private Transactions transfer1;
+    private Transactions transfer2;
+    private Transactions transfer3;
+    private Transactions transfer4;
+
 
 
     @BeforeEach
@@ -95,6 +100,15 @@ class TransactionsRepositoryTest {
         interest1 = new Transactions(account1,new Money(new BigDecimal(500)));
         transactionsRepository.save(interest1);
 
+        transfer1 = new Transactions(account1,account2,new Money(new BigDecimal(500)), user1);
+        transfer2 = new Transactions(account1,account2,new Money(new BigDecimal(500)), user1);
+        transfer3 = new Transactions(account1,account2,new Money(new BigDecimal(500)), user1);
+        transfer4 = new Transactions(account1,account2,new Money(new BigDecimal(500)), user1);
+
+        transactionsRepository.save(transfer1);
+        transactionsRepository.save(transfer2);
+        transactionsRepository.save(transfer3);
+        transactionsRepository.save(transfer4);
 
     }
 
@@ -122,4 +136,58 @@ class TransactionsRepositoryTest {
         assertEquals(LocalDateTime.now().getYear(),lastInterestDate.get().getYear());
 
     }
+
+    @Test
+    void transactionsInOneSecond(){
+        var transInOneSecond = transactionsRepository.findTransactionsInOneSecond(account1.getAccountId(),transfer4.getTransactionDateTime());
+        assertEquals(4,transInOneSecond.get());
+    }
+
+    @Test
+    void transactionsInOneSecond_amendedTime(){
+        LocalDateTime start = transfer4.getTransactionDateTime();
+        LocalDateTime twoSecondsAgo = LocalDateTime.of(start.getYear(),start.getMonthValue(),start.getDayOfMonth(), start.getHour(), start.getMinute(), start.getSecond()-2);
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer1.getTransactionId());
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer2.getTransactionId());
+
+        var transInOneSecond = transactionsRepository.findTransactionsInOneSecond(account1.getAccountId(),transfer4.getTransactionDateTime());
+        assertEquals(2,transInOneSecond.get());
+    }
+
+    @Test
+    void transactionsMaxIn24(){
+        var transIn24Hours = transactionsRepository.findMaxTransactionIn24Hours(account1.getAccountId());
+        assertEquals(new BigDecimal(2000.00).setScale(2),transIn24Hours.get());
+    }
+
+    @Test
+    void transactionsMaxIn24_amendedDates(){
+        LocalDateTime start = transfer4.getTransactionDateTime();
+        LocalDateTime twoSecondsAgo = LocalDateTime.of(start.getYear(),start.getMonthValue()-1,start.getDayOfMonth(), start.getHour(), start.getMinute(), start.getSecond());
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer1.getTransactionId());
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer2.getTransactionId());
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer3.getTransactionId());
+        var transIn24Hours = transactionsRepository.findMaxTransactionIn24Hours(account1.getAccountId());
+        assertEquals(new BigDecimal(1500.00).setScale(2),transIn24Hours.get());
+    }
+
+    @Test
+    void transactionsSumInLast24Hours(){
+        var transInLast24 = transactionsRepository.findSumTransactionsIn24Hours(account1.getAccountId(),transfer4.getTransactionDateTime());
+        assertEquals(new BigDecimal(2000.00).setScale(2),transInLast24.get());
+    }
+
+    @Test
+    void transactionsSumInLast24Hours_amendedTime(){
+        LocalDateTime start = transfer4.getTransactionDateTime();
+        LocalDateTime twoSecondsAgo = LocalDateTime.of(start.getYear(),start.getMonthValue()-1,start.getDayOfMonth(), start.getHour(), start.getMinute(), start.getSecond()-2);
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer1.getTransactionId());
+        transactionsRepository.updateTransactionDate(twoSecondsAgo,transfer2.getTransactionId());
+
+        var transInLast24 = transactionsRepository.findSumTransactionsIn24Hours(account1.getAccountId(),transfer4.getTransactionDateTime());
+        assertEquals(new BigDecimal(1000.00).setScale(2),transInLast24.get());
+    }
+
+
+
 }

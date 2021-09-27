@@ -6,9 +6,11 @@ import com.ironhack.midtermproject.controller.dto.TransferDTO;
 import com.ironhack.midtermproject.controller.interfaces.ITransactionController;
 import com.ironhack.midtermproject.dao.accounts.*;
 import com.ironhack.midtermproject.dao.roles.Users;
+import com.ironhack.midtermproject.enums.AccountStatus;
 import com.ironhack.midtermproject.enums.TransactionTypes;
 import com.ironhack.midtermproject.repository.*;
 import com.ironhack.midtermproject.utils.AccountUtility;
+import com.ironhack.midtermproject.utils.FraudDetection;
 import com.ironhack.midtermproject.utils.Money;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class TransactionController implements ITransactionController {
 
     @Autowired
     private AccountUtility accountUtility;
+
+    @Autowired
+    private FraudDetection fraudDetection;
 
     @Autowired
     private UserRepository userRepository;
@@ -142,9 +147,22 @@ public class TransactionController implements ITransactionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No Destination Account for that reference");
         }
 
+        if(ownedAccount.get().getAccountStatus()==AccountStatus.FROZEN || receivingAccount.get().getAccountStatus()==AccountStatus.FROZEN){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"One or More Accounts Frozen");
+        }
+
         // Actual transaction
         Account outAccount = accountRepository.getById(sourceAccount);
         Account inAccount = accountRepository.getById(transferDTO.getDestinationAccount());
+
+        Transactions transferTransaction = new Transactions(outAccount,inAccount,new Money(transferDTO.getTransferAmount()), userExecuting);
+
+        //Fraud Detection Block
+
+        fraudDetection.checkTransactionsInOneSecond(inAccount.getAccountId(),outAccount.getAccountId(),transferTransaction.getTransactionDateTime());
+        fraudDetection.checkMaxTransactionsIn24Hours(inAccount.getAccountId(),outAccount.getAccountId(), transferTransaction.getTransactionDateTime(),transferTransaction.getTransactionAmount().getAmount());
+
+
 
         outAccount.setBalance(new Money(outAccount.getBalance().decreaseAmount(transferDTO.getTransferAmount())));
         accountRepository.save(outAccount);
@@ -152,8 +170,8 @@ public class TransactionController implements ITransactionController {
         inAccount.setBalance(new Money(inAccount.getBalance().increaseAmount(transferDTO.getTransferAmount())));
         accountRepository.save(inAccount);
 
-        Transactions transferTransaction = new Transactions(outAccount,inAccount,new Money(transferDTO.getTransferAmount()), userExecuting);
         return transactionsRepository.save(transferTransaction);
+
 
     }
 
@@ -193,6 +211,10 @@ public class TransactionController implements ITransactionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No account for that ID");
         }
 
+        if(destinationAccount.get().getAccountStatus()==AccountStatus.FROZEN ){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Account Frozen");
+        }
+
 
         if(checkingAccount.isPresent()){
             secretKey = checkingAccount.get().getSecretKey();
@@ -208,13 +230,19 @@ public class TransactionController implements ITransactionController {
 
         // Actual transaction
         Account inAccount = accountRepository.getById(thirdPartyTransactionDTO.getAccountId());
+        Transactions thirdPartyTransaction = new Transactions(new Money(thirdPartyTransactionDTO.getAmount()),inAccount, TransactionTypes.THIRDPARTYTOACCOUNT, userExecuting);
+
+        //fraud check
+        fraudDetection.checkTransactionsInOneSecond(inAccount.getAccountId(),null, thirdPartyTransaction.getTransactionDateTime());
+        fraudDetection.checkMaxTransactionsIn24Hours(inAccount.getAccountId(),null, thirdPartyTransaction.getTransactionDateTime(),thirdPartyTransaction.getTransactionAmount().getAmount());
+
+
 
         inAccount.setBalance(new Money(inAccount.getBalance().increaseAmount(thirdPartyTransactionDTO.getAmount())));
         accountRepository.save(inAccount);
 
         //change this to take actual third party id
-        Transactions thirdPartyTransaction = new Transactions(new Money(thirdPartyTransactionDTO.getAmount()),inAccount, TransactionTypes.THIRDPARTYTOACCOUNT, userExecuting);
-        return transactionsRepository.save(thirdPartyTransaction);
+         return transactionsRepository.save(thirdPartyTransaction);
 
 
     }
@@ -256,6 +284,9 @@ public class TransactionController implements ITransactionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No account for that ID");
         }
 
+        if(destinationAccount.get().getAccountStatus()==AccountStatus.FROZEN ){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Account Frozen");
+        }
 
         if(checkingAccount.isPresent()){
             secretKey = checkingAccount.get().getSecretKey();
@@ -271,12 +302,17 @@ public class TransactionController implements ITransactionController {
 
         // Actual transaction
         Account outAccount = accountRepository.getById(thirdPartyTransactionDTO.getAccountId());
+        Transactions thirdPartyTransaction = new Transactions(outAccount,new Money(thirdPartyTransactionDTO.getAmount()), TransactionTypes.ACCOUNTTOTHIRDPARTY, userExecuting);
+
+        //fraud check
+        fraudDetection.checkTransactionsInOneSecond(null,outAccount.getAccountId(),thirdPartyTransaction.getTransactionDateTime());
+        fraudDetection.checkMaxTransactionsIn24Hours(null, outAccount.getAccountId(), thirdPartyTransaction.getTransactionDateTime(),thirdPartyTransaction.getTransactionAmount().getAmount());
+
 
         outAccount.setBalance(new Money(outAccount.getBalance().decreaseAmount(thirdPartyTransactionDTO.getAmount())));
         accountRepository.save(outAccount);
 
         //change this to take actual third party id
-        Transactions thirdPartyTransaction = new Transactions(outAccount,new Money(thirdPartyTransactionDTO.getAmount().multiply(new BigDecimal(-1))), TransactionTypes.ACCOUNTTOTHIRDPARTY, userExecuting);
         return transactionsRepository.save(thirdPartyTransaction);
 
 
