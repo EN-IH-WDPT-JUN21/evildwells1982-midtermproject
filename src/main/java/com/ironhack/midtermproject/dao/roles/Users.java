@@ -7,11 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Random;
 
 @Entity
 @Getter
@@ -43,7 +46,11 @@ public abstract class Users {
     public Users(String name, String roles) {
         setName(name);
         setRoles(roles);
-        setUsername(name.replaceAll("\\s",""));
-        setPassword(name.replaceAll("\\s",""));
+        Random rand = new Random();
+        int int_random = rand.nextInt(100);
+        String randValue = String.valueOf(int_random);
+        setUsername(name.replaceAll("\\s","") + randValue);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(15);
+        setPassword(passwordEncoder.encode(name.replaceAll("\\s","")));
     }
 }

@@ -5,20 +5,22 @@ import com.ironhack.midtermproject.controller.dto.ThirdPartyTransactionDTO;
 import com.ironhack.midtermproject.controller.dto.TransferDTO;
 import com.ironhack.midtermproject.controller.interfaces.ITransactionController;
 import com.ironhack.midtermproject.dao.accounts.*;
+import com.ironhack.midtermproject.dao.roles.Users;
 import com.ironhack.midtermproject.enums.TransactionTypes;
 import com.ironhack.midtermproject.repository.*;
 import com.ironhack.midtermproject.utils.AccountUtility;
 import com.ironhack.midtermproject.utils.Money;
-import org.apache.catalina.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.Option;
+
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +51,23 @@ public class TransactionController implements ITransactionController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ThirdPartyRepository thirdPartyRepository;
+
     @PatchMapping("/updatebalance/{accountId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions updateBalance(@PathVariable(name= "accountId") Long accountId, @RequestBody @Valid BalanceDTO balanceDTO){
+    public Transactions updateBalance(@PathVariable(name= "accountId") Long accountId, @RequestBody @Valid BalanceDTO balanceDTO, Principal principal){
 
+
+        Users userExecuting = null;
+        if(!(principal ==null)){
+            Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
+            if(executingUser.isPresent()){
+                userExecuting = userRepository.findByUsername(principal.getName()).get();
+            }
+        }
         Optional<Account> account = accountRepository.findById(accountId);
+
 
         if(account.isPresent()){
             Money balanceDifference = new Money(balanceDTO.getBalance().subtract(account.get().getBalance().getAmount()));
@@ -66,7 +80,7 @@ public class TransactionController implements ITransactionController {
             account.get().setBalance(new Money(balanceDTO.getBalance()));
 
             //***Needs to be updated to take userId of admin user executing request***
-            Transactions adminTransaction = new Transactions(balanceDifference,account.get(),transactionTypes, userRepository.getById(1L));
+            Transactions adminTransaction = new Transactions(balanceDifference,account.get(),transactionTypes, userExecuting);
             accountRepository.save(account.get());
             return transactionsRepository.save(adminTransaction);
         }
@@ -77,17 +91,26 @@ public class TransactionController implements ITransactionController {
 
     @PostMapping("/transferfunds/{accountId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions transferFunds(@PathVariable(name = "accountId") Long sourceAccount, @RequestBody @Valid TransferDTO transferDTO) {
+    public Transactions transferFunds(@PathVariable(name = "accountId") Long sourceAccount, @RequestBody @Valid TransferDTO transferDTO, Principal principal) {
 
         Optional<Account> ownedAccount = accountRepository.findById(sourceAccount);
         Optional<Account> receivingAccount = accountRepository.findById(transferDTO.getDestinationAccount());
         Optional<CreditCard> isCreditCard = creditCardRepository.findById(sourceAccount);
         Money newBalance;
 
+        Users userExecuting = null;
         //**Needs to be updated to check that account belongs to individual that is sending the request***
+        if(!(principal ==null)){
+            Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
+            userExecuting = executingUser.get();
+            if(executingUser.get().getUserId() != ownedAccount.get().getPrimaryOwner().getUserId() && (ownedAccount.get().getSecondaryOwner() == null || executingUser.get().getUserId() != ownedAccount.get().getSecondaryOwner().getUserId())){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You are not the owner of this account");
+            }
+        }
 
         // Condition checking to ensure valid request
         if (ownedAccount.isPresent()) {
+
             List<Object[]> list = accountRepository.findAccountsForAccountId(sourceAccount);
 
             //apply Interest, Maintenance Fees, and account Penalties before checking available balance.
@@ -129,14 +152,14 @@ public class TransactionController implements ITransactionController {
         inAccount.setBalance(new Money(inAccount.getBalance().increaseAmount(transferDTO.getTransferAmount())));
         accountRepository.save(inAccount);
 
-        Transactions transferTransaction = new Transactions(outAccount,inAccount,new Money(transferDTO.getTransferAmount()), outAccount.getPrimaryOwner());
+        Transactions transferTransaction = new Transactions(outAccount,inAccount,new Money(transferDTO.getTransferAmount()), userExecuting);
         return transactionsRepository.save(transferTransaction);
 
     }
 
     @PostMapping("/sendfunds")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions sendFunds(@RequestHeader("hashkey") String hashKey, @RequestBody @Valid ThirdPartyTransactionDTO thirdPartyTransactionDTO){
+    public Transactions sendFunds(@RequestHeader("hashkey") String hashKey, @RequestBody @Valid ThirdPartyTransactionDTO thirdPartyTransactionDTO, Principal principal){
 
         Optional<Account> destinationAccount = accountRepository.findById(thirdPartyTransactionDTO.getAccountId());
 
@@ -144,11 +167,16 @@ public class TransactionController implements ITransactionController {
         Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(thirdPartyTransactionDTO.getAccountId());
         Optional<StudentChecking> studentChecking = studentCheckingRepository.findById(thirdPartyTransactionDTO.getAccountId());
         String secretKey = "temp";
+        Users userExecuting = null;
 
         //***Need to update this to check the hashkey for the specific third party user***
-
-        if(!hashKey.equals("T3stTh4rd")){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"HashKey does not match");
+        if(!(principal ==null)) {
+            Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
+            userExecuting = executingUser.get();
+            String userHashKey = thirdPartyRepository.findById(executingUser.get().getUserId()).get().getHashKey();
+            if (!hashKey.equals(userHashKey)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "HashKey does not match");
+            }
         }
 
         if(destinationAccount.isPresent()){
@@ -185,7 +213,7 @@ public class TransactionController implements ITransactionController {
         accountRepository.save(inAccount);
 
         //change this to take actual third party id
-        Transactions thirdPartyTransaction = new Transactions(new Money(thirdPartyTransactionDTO.getAmount()),inAccount, TransactionTypes.THIRDPARTYTOACCOUNT, userRepository.getById(4L));
+        Transactions thirdPartyTransaction = new Transactions(new Money(thirdPartyTransactionDTO.getAmount()),inAccount, TransactionTypes.THIRDPARTYTOACCOUNT, userExecuting);
         return transactionsRepository.save(thirdPartyTransaction);
 
 
@@ -194,7 +222,7 @@ public class TransactionController implements ITransactionController {
 
     @PostMapping("/claimfunds")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions claimFunds(@RequestHeader("hashkey") String hashKey, @RequestBody @Valid ThirdPartyTransactionDTO thirdPartyTransactionDTO){
+    public Transactions claimFunds(@RequestHeader("hashkey") String hashKey, @RequestBody @Valid ThirdPartyTransactionDTO thirdPartyTransactionDTO, Principal principal){
 
         Optional<Account> destinationAccount = accountRepository.findById(thirdPartyTransactionDTO.getAccountId());
 
@@ -202,11 +230,16 @@ public class TransactionController implements ITransactionController {
         Optional<CheckingAccount> checkingAccount = checkingAccountRepository.findById(thirdPartyTransactionDTO.getAccountId());
         Optional<StudentChecking> studentChecking = studentCheckingRepository.findById(thirdPartyTransactionDTO.getAccountId());
         String secretKey = "temp";
+        Users userExecuting = null;
 
         //***Need to update this to check the hashkey for the specific third party user***
-
-        if(!hashKey.equals("T3stTh4rd")){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"HashKey does not match");
+        if(!(principal ==null)) {
+            Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
+            userExecuting = executingUser.get();
+            String userHashKey = thirdPartyRepository.findById(executingUser.get().getUserId()).get().getHashKey();
+            if (!hashKey.equals(userHashKey)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "HashKey does not match");
+            }
         }
 
         if(destinationAccount.isPresent()){
@@ -243,7 +276,7 @@ public class TransactionController implements ITransactionController {
         accountRepository.save(outAccount);
 
         //change this to take actual third party id
-        Transactions thirdPartyTransaction = new Transactions(outAccount,new Money(thirdPartyTransactionDTO.getAmount().multiply(new BigDecimal(-1))), TransactionTypes.ACCOUNTTOTHIRDPARTY, userRepository.getById(4L));
+        Transactions thirdPartyTransaction = new Transactions(outAccount,new Money(thirdPartyTransactionDTO.getAmount().multiply(new BigDecimal(-1))), TransactionTypes.ACCOUNTTOTHIRDPARTY, userExecuting);
         return transactionsRepository.save(thirdPartyTransaction);
 
 

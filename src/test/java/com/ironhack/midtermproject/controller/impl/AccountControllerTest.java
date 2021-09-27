@@ -74,6 +74,7 @@ class AccountControllerTest {
         Address address1 = new Address("Test Street","Test Postcode");
         addressRepository.save(address1);
         user1 = new AccountHolder("Test Customer1", LocalDate.of(1980,2,11),address1);
+        user1.setUsername("TestUserName");
         accountHolderRepository.save(user1);
         account1 = new CheckingAccount(new Money(new BigDecimal(3500)),user1,"SomeSecretKey");
         checkingAccountRepository.save(account1);
@@ -183,6 +184,7 @@ class AccountControllerTest {
         assertTrue(mvcResult.getResponse().getContentAsString().contains("creditLimit"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("100"));
     }
+
 
 
 

@@ -68,3 +68,13 @@ Post /sendfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh
 "secretKey": "SomeSecretkey"
 
 }
+
+Post /claimfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh4rd
+
+{
+
+"amount": 300,
+"accountId": 1,
+"secretKey": "SomeSecretkey"
+
+}

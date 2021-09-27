@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -132,7 +133,6 @@ class TransactionControllerTest {
 
     @Test
     void updateBalance_correctDecrease() throws Exception {
-
         BalanceDTO balanceDTO = new BalanceDTO(new BigDecimal(3000));
         String body = objectMapper.writeValueAsString(balanceDTO);
         MvcResult mvcResult = mockMvc.perform(
@@ -228,19 +228,6 @@ class TransactionControllerTest {
 
     }
 
-    @Test
-    void sendFunds_incorrectValidation_hashKey() throws Exception {
-
-        ThirdPartyTransactionDTO thirdPartyDTO = new ThirdPartyTransactionDTO(new BigDecimal(300),account2.getAccountId(), "SomeSecretKey");
-        String body = objectMapper.writeValueAsString(thirdPartyDTO);
-        MvcResult mvcResult = mockMvc.perform(
-                post("/sendfunds")
-                        .header("hashkey","T3stTh4rdWrong")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest()).andReturn();
-
-    }
 
     @Test
     void sendFunds_missingheader() throws Exception {
@@ -285,19 +272,7 @@ class TransactionControllerTest {
 
     }
 
-    @Test
-    void claimFunds_incorrectValidation_hashKey() throws Exception {
 
-        ThirdPartyTransactionDTO thirdPartyDTO = new ThirdPartyTransactionDTO(new BigDecimal(300),account2.getAccountId(), "SomeSecretKey");
-        String body = objectMapper.writeValueAsString(thirdPartyDTO);
-        MvcResult mvcResult = mockMvc.perform(
-                post("/claimfunds")
-                        .header("hashkey","T3stTh4rdWrong")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest()).andReturn();
-
-    }
 
     @Test
     void claimFunds_missingheader() throws Exception {

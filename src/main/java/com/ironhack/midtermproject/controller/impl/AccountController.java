@@ -3,6 +3,8 @@ package com.ironhack.midtermproject.controller.impl;
 import com.ironhack.midtermproject.controller.dto.AccountDTO;
 import com.ironhack.midtermproject.controller.interfaces.IAccountController;
 import com.ironhack.midtermproject.dao.accounts.Account;
+import com.ironhack.midtermproject.dao.roles.Users;
+import com.ironhack.midtermproject.repository.UserRepository;
 import com.ironhack.midtermproject.service.interfaces.IAccountService;
 import com.ironhack.midtermproject.utils.AccountUtility;
 import com.ironhack.midtermproject.utils.Money;
@@ -15,7 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AccountController implements IAccountController {
@@ -28,6 +32,9 @@ public class AccountController implements IAccountController {
 
     @Autowired
     private IAccountService accountService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // Get path for account holders to access their accounts
     @GetMapping("/accounts/{userId}")
@@ -45,6 +52,35 @@ public class AccountController implements IAccountController {
 
         return accountRepository.findAccountsForCustomerId(userId);
     }
+
+    // Get path for account holders to access their accounts - using currently logged in user
+    @GetMapping("/accountauth")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Object[]> getAccountsUser(Principal principal) {
+
+        Optional<Users> authorisedUser = userRepository.findByUsername(principal.getName());
+
+        if (authorisedUser.isPresent()) {
+
+        Long userId = authorisedUser.get().getUserId();
+
+        List<Object[]> list = accountRepository.findAccountsForCustomerId(userId);
+
+        //apply Interest, Maintenance Fees, and account Penalties before displaying balance to user.
+        for (Object[] result : list) {
+            accountUtility.applyInterest(((BigInteger) result[0]).longValue());
+            accountUtility.applyMaintenance(((BigInteger) result[0]).longValue());
+            accountUtility.applyPenalty(((BigInteger) result[0]).longValue(), new Money((BigDecimal) result[2]));
+        }
+
+        return accountRepository.findAccountsForCustomerId(userId);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something has gone wrong");
+    }
+
+
+
+
 
     // Get path for admins to access account balance with param account id
     @GetMapping("/account/{accountId}")
