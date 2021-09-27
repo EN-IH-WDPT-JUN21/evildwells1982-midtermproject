@@ -54,7 +54,7 @@ public class AccountController implements IAccountController {
     }
 
     // Get path for account holders to access their accounts - using currently logged in user
-    @GetMapping("/accountauth")
+    @GetMapping("/myaccounts")
     @ResponseStatus(HttpStatus.OK)
     public List<Object[]> getAccountsUser(Principal principal) {
 
