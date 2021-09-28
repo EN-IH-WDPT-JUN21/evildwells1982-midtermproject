@@ -3,6 +3,7 @@
 **Application Properties (for preparation of MySQL database and user)**
 
 spring.datasource.url=jdbc:mysql://localhost:3306/midtermproject
+
 spring.datasource.username=ironhacker
 spring.datasource.password=1r0nH@ck3r
 
