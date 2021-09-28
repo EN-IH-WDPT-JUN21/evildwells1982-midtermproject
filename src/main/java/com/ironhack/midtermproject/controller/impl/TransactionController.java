@@ -84,7 +84,7 @@ public class TransactionController implements ITransactionController {
             }
             account.get().setBalance(new Money(balanceDTO.getBalance()));
 
-            //***Needs to be updated to take userId of admin user executing request***
+
             Transactions adminTransaction = new Transactions(balanceDifference,account.get(),transactionTypes, userExecuting);
             accountRepository.save(account.get());
             return transactionsRepository.save(adminTransaction);
@@ -104,7 +104,7 @@ public class TransactionController implements ITransactionController {
         Money newBalance;
 
         Users userExecuting = null;
-        //**Needs to be updated to check that account belongs to individual that is sending the request***
+
         if(!(principal ==null)){
             Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
             userExecuting = executingUser.get();
@@ -187,7 +187,7 @@ public class TransactionController implements ITransactionController {
         String secretKey = "temp";
         Users userExecuting = null;
 
-        //***Need to update this to check the hashkey for the specific third party user***
+
         if(!(principal ==null)) {
             Optional<Users> executingUser = userRepository.findByUsername(principal.getName());
             userExecuting = executingUser.get();
@@ -241,7 +241,7 @@ public class TransactionController implements ITransactionController {
         inAccount.setBalance(new Money(inAccount.getBalance().increaseAmount(thirdPartyTransactionDTO.getAmount())));
         accountRepository.save(inAccount);
 
-        //change this to take actual third party id
+
          return transactionsRepository.save(thirdPartyTransaction);
 
 

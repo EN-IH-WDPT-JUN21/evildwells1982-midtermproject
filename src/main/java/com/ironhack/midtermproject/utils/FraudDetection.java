@@ -93,7 +93,7 @@ public class FraudDetection {
                         Account incomingAccount = accountRepository.getById(inAccount);
                         incomingAccount.setAccountStatus(AccountStatus.FROZEN);
                         accountRepository.save(incomingAccount);
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fraud Detection, Origin Account Frozen");
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fraud Detection, Destination Account Frozen");
                     }
 
                 } else{
@@ -101,7 +101,7 @@ public class FraudDetection {
                         Account incomingAccount = accountRepository.getById(inAccount);
                         incomingAccount.setAccountStatus(AccountStatus.FROZEN);
                         accountRepository.save(incomingAccount);
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fraud Detection, Origin Account Frozen");
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fraud Detection, Destination Account Frozen");
                     }
                 }
             }
