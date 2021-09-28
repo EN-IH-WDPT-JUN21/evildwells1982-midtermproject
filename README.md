@@ -1,4 +1,48 @@
-Create new third party
+**Mid Term Project**
+
+**Application Properties (for preparation of MySQL database and user)**
+
+spring.datasource.url=jdbc:mysql://localhost:3306/midtermproject
+spring.datasource.username=ironhacker
+spring.datasource.password=1r0nH@ck3r
+
+**Test Data populated in Database at execution**
+
+**Authorised Users**
+
+Admin User:
+Username: Admin
+Password: Admin
+
+Third Party User:
+Username: TestThirdParty123
+Password: TestThirdParty1
+
+Account Holders:
+Username: JeffJefferson123
+Password: JeffJefferson
+
+Has 2 checking accounts (Account id: 1 and Account id: 3)
+
+Username: Pete Peterson123
+Password: PetePeterson
+
+
+Has 1 checking account (Account id: 2)
+
+Username: MollyMollson123
+Password: MollyMollson
+
+Has 1 checking account (Account id: 3)
+
+**Endpoints Created: -**
+
+**Check own Account Balances (Account_Holders only)**
+
+Get /myaccounts
+
+
+**Create new third party (Admin Only)**
 
 Post /newthirdparty with Json body similar to the below. Must have non blank name and hashKey
 
@@ -6,6 +50,8 @@ Post /newthirdparty with Json body similar to the below. Must have non blank nam
 "name": "TestThird",
 "hashKey": "H4shK3Y"
 }
+
+**Create New Account (Admin Only)**
 
 Post /newaccount/checking
 
@@ -41,6 +87,8 @@ post /newaccount/creditcard
 
 }
 
+**Transfer Funds (Account_Holder only)**
+
 Post /transferfunds/{accountId}
 
 {
@@ -51,6 +99,8 @@ Post /transferfunds/{accountId}
 
 }
 
+**Update Balance (Admin Only)**
+
 Patch /updatebalance/{accountId}
 
 {
@@ -58,6 +108,8 @@ Patch /updatebalance/{accountId}
 "balance": 500
 
 }
+
+**Send Funds to Account (Third Party Only)**
 
 Post /sendfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh4rd
 
@@ -68,6 +120,8 @@ Post /sendfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh
 "secretKey": "SomeSecretkey"
 
 }
+
+**Take Funds from Account (Third Party Only)**
 
 Post /claimfunds (must provide valid hashkey in header, KEY hashkey, VALUE T3stTh4rd
 
