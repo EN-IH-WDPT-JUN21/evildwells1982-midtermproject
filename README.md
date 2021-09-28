@@ -5,6 +5,7 @@
 spring.datasource.url=jdbc:mysql://localhost:3306/midtermproject
 
 spring.datasource.username=ironhacker
+
 spring.datasource.password=1r0nH@ck3r
 
 **Test Data populated in Database at execution**
@@ -12,7 +13,9 @@ spring.datasource.password=1r0nH@ck3r
 **Authorised Users**
 
 Admin User:
+
 Username: Admin
+
 Password: Admin
 
 Third Party User:
